@@ -1,0 +1,7 @@
+#!/bin/bash -x
+set -e
+
+mydir="$(dirname "$0")"
+while read name args;do
+	(cd "$name" && make "$@" ; )
+done < "$mydir/build-names"

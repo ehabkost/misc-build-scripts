@@ -1,0 +1,8 @@
+#!/bin/bash -x
+set -e
+
+mydir="$(dirname "$0")"
+while read name args;do
+	mkdir -p "$name"
+	(cd "$name" && ../configure $args ; )
+done < "$mydir/build-names"
