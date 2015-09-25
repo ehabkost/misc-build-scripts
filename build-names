@@ -1,5 +1,5 @@
-B x86-kvm-build	--enable-kvm --target-list=x86_64-softmmu,i386-softmmu,x86_64-linux-user,i386-linux-user
-B x86-nokvm-build	--disable-kvm --target-list=x86_64-softmmu,i386-softmmu,x86_64-linux-user,i386-linux-user
+B x86-kvm-build	--disable-fdt --enable-kvm --target-list=x86_64-softmmu,i386-softmmu,x86_64-linux-user,i386-linux-user
+B x86-nokvm-build	--disable-fdt --disable-kvm --target-list=x86_64-softmmu,i386-softmmu,x86_64-linux-user,i386-linux-user
 B some-kvm-build	--enable-kvm --target-list=x86_64-softmmu,i386-softmmu,mips-softmmu,s390x-softmmu,ppc-softmmu
 B some-nokvm-build	--disable-kvm --target-list=x86_64-softmmu,i386-softmmu,mips-softmmu,s390x-softmmu,ppc-softmmu
 B some-win-build	--cross-prefix=i686-w64-mingw32- --target-list=x86_64-softmmu,i386-softmmu,mips-softmmu,s390x-softmmu,ppc-softmmu

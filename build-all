@@ -7,7 +7,7 @@ BUILD_ARGS=("$@")
 B() {
 	local name="$1"
 	shift
-	(cd "$name" && make "${BUILD_AGS[@]}" ; )
+	(cd "$name" && make "${BUILD_AGS[@]}" || echo "Build of ${name} failed" >&2 ; )
 }
 
 source "$mydir/build-names"
