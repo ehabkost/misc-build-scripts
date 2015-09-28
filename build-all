@@ -2,12 +2,12 @@
 set -e
 
 mydir="$(dirname "$0")"
-BUILD_ARGS=("$@")
+export BUILD_ARGS=("$@")
 
 B() {
 	local name="$1"
 	shift
-	(cd "$name" && make "${BUILD_AGS[@]}" || echo "Build of ${name} failed" >&2 ; )
+	(cd "$name" && make "${BUILD_ARGS[@]}" || echo "Build of ${name} failed" >&2 ; )
 }
 
 source "$mydir/build-names"
