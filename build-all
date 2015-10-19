@@ -1,13 +1,23 @@
-#!/bin/bash -x
+#!/bin/bash
 set -e
 
 mydir="$(dirname "$0")"
 export BUILD_ARGS=("$@")
 
+export ERRORS=
+
 B() {
 	local name="$1"
 	shift
-	(cd "$name" && make "${BUILD_ARGS[@]}" || echo "Build of ${name} failed" >&2 ; )
+	if ! ( cd "$name" && make "${BUILD_ARGS[@]}"; );then
+		echo "Build of ${name} failed" >&2
+		ERRORS=1
+	fi
 }
 
 source "$mydir/build-names"
+
+if [ -n "$ERRORS" ];then
+	echo ERRORS ABOVE >&2
+	exit 1
+fi
