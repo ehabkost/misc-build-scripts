@@ -1,0 +1,16 @@
+#!/bin/bash
+b="$1"
+if [ -z "$b" ];then
+	b="x86"
+fi
+
+set -e
+set -x
+
+git remote update origin
+git checkout master
+git rebase origin/master
+git push github-qemu master
+git checkout "$b"
+git rebase master
+git push github-qemu +"$b"
