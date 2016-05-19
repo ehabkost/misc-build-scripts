@@ -11,13 +11,13 @@ B() {
 	shift
 	if ! ( cd "$name" && make "${BUILD_ARGS[@]}"; );then
 		echo "ERROR: Build of ${name} failed" >&2
-		ERRORS=1
+		ERRORS="$ERRORS ${name}"
 	fi
 }
 
 source "$mydir/build-names"
 
 if [ -n "$ERRORS" ];then
-	echo ERRORS ABOVE >&2
+	echo ERRORS ABOVE: $ERRORS >&2
 	exit 1
 fi
