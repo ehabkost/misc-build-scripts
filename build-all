@@ -10,7 +10,7 @@ B() {
 	local name="$1"
 	shift
 	if ! ( cd "$name" && make "${BUILD_ARGS[@]}"; );then
-		echo "Build of ${name} failed" >&2
+		echo "ERROR: Build of ${name} failed" >&2
 		ERRORS=1
 	fi
 }
