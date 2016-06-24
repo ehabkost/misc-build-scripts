@@ -1,50 +1,53 @@
 -
-  - url: http://wiki.qemu.org/download/linux-0.2.img.bz2
-  - sha1sum: 79cbba08bfa35f4e0b132f5d1cb9554c2fc27dce
+  url: http://wiki.qemu.org/download/linux-0.2.img.bz2
+  sha1sum: 79cbba08bfa35f4e0b132f5d1cb9554c2fc27dce
 -
-  - url: http://odin.fdos.org/odin2005/odin1440.img
-  - sha1sum: 28f5c62f459223abab92a86b346823c596149319
+  url: http://odin.fdos.org/odin2005/odin1440.img
+  sha1sum: 28f5c62f459223abab92a86b346823c596149319
 -
-  - url: http://nopid.free.fr/small.ffs.bz2
-  - sha1sum: 584ef200ade76799de71440c8fee249b27d4a708
+  url: http://nopid.free.fr/small.ffs.bz2
+  sha1sum: 584ef200ade76799de71440c8fee249b27d4a708
 -
-  - url: http://wiki.qemu.org/download/minix204.tar.bz2
-  - sha1sum: a260312ac5892573400cb9232d4a58e736159962
+  url: http://wiki.qemu.org/download/minix204.tar.bz2
+  sha1sum: a260312ac5892573400cb9232d4a58e736159962
 -
-  - url: http://wiki.qemu.org/download/efi-bios.tar.bz2
-  - sha1sum: eacf1318dcbdac68e927ca4fb79ea2bd1d3fd2bd
+  url: http://wiki.qemu.org/download/efi-bios.tar.bz2
+  sha1sum: eacf1318dcbdac68e927ca4fb79ea2bd1d3fd2bd
 -
-  - url: http://wiki.qemu.org/download/sparc-test-0.2.tar.gz
-  - sha1sum: d9ccd19371feaf0e2d21946e027c03a9ed67c8e6
+  url: http://wiki.qemu.org/download/sparc-test-0.2.tar.gz
+  sha1sum: d9ccd19371feaf0e2d21946e027c03a9ed67c8e6
 -
-  - url: http://wiki.qemu.org/download/arm-test-0.2.tar.gz
-  - sha1sum: 5434274bb8a142569b54bdf3f8a14c75c4fa816c
-  - extract-command: 'tar -zxvf ${FILE}'
-  - arch: arm
-  - test-command: '"$QEMU" -kernel ./arm-test/zImage.integrator -initrd ./arm-test/arm_root.img -nographic -append console=ttyAMA0'
+  url: http://wiki.qemu.org/download/arm-test-0.2.tar.gz
+  sha1sum: 5434274bb8a142569b54bdf3f8a14c75c4fa816c
+  extract-command: 'tar -zxvf ${FILE}'
+  arch: arm
+  tests:
+    - method: stdoutwait
+      expect: 'qemu login: '
+      command: '"$QEMU" -machine integratorcp -nodefaults -kernel ./arm-test/zImage.integrator -initrd ./arm-test/arm_root.img -nographic -append console=ttyAMA0 -serial stdio'
 -
-  - url: http://wiki.qemu.org/download/mips-test-0.2.tar.gz
-  - sha1sum: b3fcf6e0674c4856e4adddf1b08e1977458ee160
+  url: http://wiki.qemu.org/download/mips-test-0.2.tar.gz
+  sha1sum: b3fcf6e0674c4856e4adddf1b08e1977458ee160
 -
-  - url: http://wiki.qemu.org/download/mipsel-test-0.2.tar.gz
-  - sha1sum: 9601b9590490f3e561f9d7b82a3aebeccf59f693
+  url: http://wiki.qemu.org/download/mipsel-test-0.2.tar.gz
+  sha1sum: 9601b9590490f3e561f9d7b82a3aebeccf59f693
 -
-  - url: http://wiki.qemu.org/download/coldfire-test-0.1.tar.bz2
-  - sha1sum: 3d14299823e28cc044df32bf674e42ba161e3995
+  url: http://wiki.qemu.org/download/coldfire-test-0.1.tar.bz2
+  sha1sum: 3d14299823e28cc044df32bf674e42ba161e3995
 -
-  - url: http://wiki.qemu.org/download/sh-test-0.2.tar.bz2
-  - sha1sum: 073ec0e3059668500ed56bbdfc34fb8dc09e9b8d
+  url: http://wiki.qemu.org/download/sh-test-0.2.tar.bz2
+  sha1sum: 073ec0e3059668500ed56bbdfc34fb8dc09e9b8d
 -
-  - url: http://wiki.qemu.org/download/cris-axisdev88-img-linux2_6_33.tgz
-  - sha1sum: 2066a2cd3f7c6faaa5ea44da1eade3d8d9058bf8
+  url: http://wiki.qemu.org/download/cris-axisdev88-img-linux2_6_33.tgz
+  sha1sum: 2066a2cd3f7c6faaa5ea44da1eade3d8d9058bf8
 -
-  - url: http://wiki.qemu.org/download/mb-s3adsp1800-linux-2_6_34.tgz
-  - sha1sum: 1b1d91e715b8f0fcf56d7fe3c0b76e838f1e5d49
+  url: http://wiki.qemu.org/download/mb-s3adsp1800-linux-2_6_34.tgz
+  sha1sum: 1b1d91e715b8f0fcf56d7fe3c0b76e838f1e5d49
 -
-  - url: http://wiki.qemu.org/download/ppc-virtexml507-linux-2_6_34.tgz
-  - sha1sum: 5c55881734e46d32c131e38d88df2a0a33cdc92d
+  url: http://wiki.qemu.org/download/ppc-virtexml507-linux-2_6_34.tgz
+  sha1sum: 5c55881734e46d32c131e38d88df2a0a33cdc92d
 -
-  - url: http://wiki.qemu.org/download/xtensa-dc232b_kernel_rootfs.tgz
-  - sha1sum: b79c2594290b0dc3f36eddfeba87fa569bc0f53f
+  url: http://wiki.qemu.org/download/xtensa-dc232b_kernel_rootfs.tgz
+  sha1sum: b79c2594290b0dc3f36eddfeba87fa569bc0f53f
 
 
