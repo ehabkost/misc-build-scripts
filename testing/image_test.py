@@ -81,12 +81,22 @@ def test_image(d):
             m = t['method']
             TEST_METHODS[m](d, t)
 
-logging.basicConfig(stream=sys.stderr, level=logging.DEBUG)
 
-dlist = yaml.load(open(IMAGE_FILE))
-dbg('dlist: %r', dlist)
-for d in dlist:
-    try:
-        test_image(d)
-    except:
-        traceback.print_exc()
+def main():
+    logging.basicConfig(stream=sys.stderr, level=logging.DEBUG)
+    name = None
+    if len(sys.argv) >= 2:
+        name = sys.argv[1]
+
+    dlist = yaml.load(open(IMAGE_FILE))
+    dbg('dlist: %r', dlist)
+    for d in dlist:
+        if name is not None and not name.lower() in d['url'].lower():
+            continue
+        try:
+            test_image(d)
+        except:
+            traceback.print_exc()
+
+if __name__ == '__main__':
+    main()
