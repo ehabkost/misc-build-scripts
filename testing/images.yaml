@@ -22,6 +22,12 @@
 -
   url: http://wiki.qemu.org/download/sparc-test-0.2.tar.gz
   sha1sum: d9ccd19371feaf0e2d21946e027c03a9ed67c8e6
+  extract-command: 'tar -zxvf ${FILE}'
+  arch: sparc
+  tests:
+    - method: stdoutwait
+      command: '$QEMU -kernel sparc-test/vmlinux-2.6.11+tcx -initrd sparc-test/linux.img -append "root=/dev/ram console=ttyS0 video=tcxfb:off" -nographic'
+      expect: "job control turned off\r\n# "
 -
   url: http://wiki.qemu.org/download/arm-test-0.2.tar.gz
   sha1sum: 5434274bb8a142569b54bdf3f8a14c75c4fa816c
