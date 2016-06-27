@@ -1,6 +1,12 @@
 -
   url: http://wiki.qemu.org/download/linux-0.2.img.bz2
   sha1sum: 79cbba08bfa35f4e0b132f5d1cb9554c2fc27dce
+  extract-command: 'bunzip2 < ${FILE} > linux.img'
+  arch: x86_64
+  tests:
+    #TODO: find a way to check for display output
+    - method: just_run
+      command: '$QEMU -machine accel=kvm -drive file=linux.img,format=raw,if=ide -nodefaults -vga cirrus -serial stdio'
 -
   url: http://odin.fdos.org/odin2005/odin1440.img
   sha1sum: 28f5c62f459223abab92a86b346823c596149319
