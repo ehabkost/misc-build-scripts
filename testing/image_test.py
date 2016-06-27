@@ -39,7 +39,10 @@ def stdoutwait(d, t):
     try:
         output = bytes()
         while True:
-            output += proc.stdout.read(1)
+            o = proc.stdout.read(1)
+            if not o:
+                raise Exception("QEMU process terminated")
+            output += o
             dbg("output is now %d bytes [%s]", len(output), output[-20:])
             if e in output:
                 dbg("Success!")
