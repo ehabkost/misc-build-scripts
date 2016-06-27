@@ -63,6 +63,8 @@ def test_image(d):
     filename = os.path.basename(path)
     downloaded_file = os.path.join(DOWNLOAD_DIR, filename)
 
+    dbg('downloaded file: %r', downloaded_file)
+
     if not os.path.isfile(downloaded_file):
         #TODO: auto-download
         err('Download it first')
