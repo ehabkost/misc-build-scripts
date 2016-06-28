@@ -13,7 +13,7 @@ MY_DIR = os.path.abspath(os.path.dirname(sys.argv[0]))
 DOWNLOAD_DIR = os.path.join(MY_DIR, 'downloads')
 IMAGE_FILE = os.path.join(MY_DIR, 'images.yaml')
 
-DEFAULT_TIMEOUT = 30
+DEFAULT_TIMEOUT = 10
 
 @contextlib.contextmanager
 def changedir(d):
