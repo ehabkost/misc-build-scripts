@@ -38,7 +38,10 @@ def try_read(f, timeout=None):
     dbg("data is available")
     while p.poll(0):
         #TODO: read in larger chunks
-        r.extend(f.read(1))
+        o = f.read(1)
+        if not o:
+            break
+        r.extend(o)
     return r
 
 
@@ -65,6 +68,8 @@ def stdoutwait(d, t):
         while True:
             #TODO: timeout
             o = try_read(proc.stdout, t.get('timeout'))
+            if o is None:
+                raise Exception("timeout")
             if not o:
                 raise Exception("QEMU process terminated")
             output.extend(o)
