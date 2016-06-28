@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import sys, os, traceback, contextlib, subprocess
-import urllib.parse, tempfile, yaml
+import urllib.parse, tempfile, yaml, hashlib
 
 import logging
 logger = logging.getLogger(__name__)
@@ -56,6 +56,15 @@ TEST_METHODS = {
     'stdoutwait': stdoutwait,
 }
 
+def sha1file(f):
+    h = hashlib.new('sha1')
+    while True:
+        b = f.read(4096)
+        if not b:
+            break
+        h.update(b)
+    return h
+
 def test_image(d):
     dbg('will test %r', d)
     url = d['url']
@@ -69,6 +78,11 @@ def test_image(d):
         #TODO: auto-download
         err('Download it first')
         return
+
+    filehash = sha1file(open(downloaded_file, mode='rb')).hexdigest()
+    expectedhash = d['sha1sum'].strip()
+    if filehash.lower() != expectedhash.lower():
+        raise Exception("sha1 mismatch: %s. expected; %s" % (filehash, expectedhash))
 
     cmd = d.get('extract-command')
     if not cmd:
