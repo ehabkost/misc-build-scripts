@@ -49,9 +49,21 @@
 -
   url: http://wiki.qemu.org/download/mipsel-test-0.2.tar.gz
   sha1sum: 9601b9590490f3e561f9d7b82a3aebeccf59f693
+  arch: mipsel
+  extract-command: 'tar -zxvf $FILE'
+  tests:
+    - method: stdoutwait
+      expect: "job control turned off\r\n~ # "
+      command: '$QEMU -machine mips -kernel mipsel-test/vmlinux-2.6.18-3-qemu -initrd mipsel-test/initrd.gz -append "console=ttyS0 init=/bin/sh" -nographic -m 128'
 -
   url: http://wiki.qemu.org/download/coldfire-test-0.1.tar.bz2
   sha1sum: 3d14299823e28cc044df32bf674e42ba161e3995
+  arch: m68k
+  extract-command: 'tar -jxvf $FILE'
+  tests:
+    - method: stdoutwait
+      command: '$QEMU -kernel coldfire-test-0.1/vmlinux-2.6.21-uc0 -nographic'
+      expect: "Enter 'help' for a list of built-in commands.\r\n\r\n# "
 -
   url: http://wiki.qemu.org/download/sh-test-0.2.tar.bz2
   sha1sum: 073ec0e3059668500ed56bbdfc34fb8dc09e9b8d
