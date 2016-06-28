@@ -25,6 +25,7 @@ def qemu_subprocess(d, cmd, **kwargs):
     env = os.environ.copy()
     env['QEMU'] = 'qemu-system-%s' % (arch)
     dbg('Will run QEMU command: %r', cmd)
+    dbg("$QEMU: %r", env['QEMU'])
     return subprocess.Popen(cmd, shell=True, env=env, **kwargs)
 
 def just_run(d, t):
