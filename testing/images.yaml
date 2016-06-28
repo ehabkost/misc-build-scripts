@@ -1,3 +1,6 @@
+#TODO: this should become an Avocado multiplex config:
+#      https://avocado-framework.readthedocs.io/en/latest/WritingTests.html#using-a-multiplex-file
+
 - name: linux-0.2.img.bz2
   url: http://wiki.qemu.org/download/linux-0.2.img.bz2
   sha1sum: 79cbba08bfa35f4e0b132f5d1cb9554c2fc27dce
