@@ -136,9 +136,9 @@ def test_image(d):
 def main():
 
     parser = argparse.ArgumentParser(description='Run test on images based on images.yaml')
-    parser.add_argument('-d', dest='debug', action='store_true',
+    parser.add_argument('-d', '--debug', dest='debug', action='store_true',
                         help='Debugging messages')
-    parser.add_argument('-v', dest='verbose', action='store_true',
+    parser.add_argument('-v', '--verbose', dest='verbose', action='store_true',
                         help='Verbose mode')
     parser.add_argument('filter', nargs='?', help='filter test names', default=None)
     args = parser.parse_args()
