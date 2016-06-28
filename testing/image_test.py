@@ -172,6 +172,8 @@ def main():
             err('Failure summary:')
             for d,e in failures:
                 err('FAILURE: %s: %r', d['name'], e)
+        else:
+            info('ALL PASSED')
 
     if failures:
         sys.exit(1)
