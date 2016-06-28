@@ -4,9 +4,9 @@
   extract-command: 'bunzip2 < ${FILE} > linux.img'
   arch: x86_64
   tests:
-    #TODO: find a way to check for display output
-    - method: just_run
-      command: '$QEMU -machine accel=kvm -drive file=linux.img,format=raw,if=ide -nodefaults -vga cirrus -serial stdio'
+#    #TODO: find a way to check for display (not serial) output, or force serial output on this image
+#    - method: just_run
+#      command: '$QEMU -machine accel=kvm -drive file=linux.img,format=raw,if=ide -nodefaults -vga cirrus -serial stdio'
 -
   url: http://odin.fdos.org/odin2005/odin1440.img
   sha1sum: 28f5c62f459223abab92a86b346823c596149319
@@ -68,6 +68,7 @@
   url: http://wiki.qemu.org/download/sh-test-0.2.tar.bz2
   sha1sum: 073ec0e3059668500ed56bbdfc34fb8dc09e9b8d
   arch: sh4
+#  #TODO: this is failing due to missing bios image
 #  extract-command: 'tar -jxvf $FILE'
 #  tests:
 #    - method: just_run
