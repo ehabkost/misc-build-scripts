@@ -39,6 +39,7 @@ def stdoutwait(d, t):
     try:
         output = bytes()
         while True:
+            #TODO: timeout
             o = proc.stdout.read(1)
             if not o:
                 raise Exception("QEMU process terminated")
