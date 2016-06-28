@@ -82,6 +82,10 @@
     - method: stdoutwait
       command: '$QEMU -M axis-dev88 -nodefaults -serial stdio -kernel cris-axisdev88/kimage -nographic'
       expect: "job control turned off\r\n# "
+    - method: stdoutwait
+      command: '$QEMU -M axis-dev88 -nodefaults -serial stdio -kernel cris-axisdev88/kimage -nographic -append "root=/dev/mtdblock3 init=/linuxrc rootfstype=jffs2 mmc_core.use_spi_crc=0 mmc_spi.spi_mode=3 init=/selftest.sh"
+'
+      expect: "All tests passed."
 -
   url: http://wiki.qemu.org/download/mb-s3adsp1800-linux-2_6_34.tgz
   sha1sum: 1b1d91e715b8f0fcf56d7fe3c0b76e838f1e5d49
@@ -91,6 +95,10 @@
     - method: stdoutwait
       command: '$QEMU -M petalogix-s3adsp1800 -nographic -nodefaults -serial stdio -kernel mb-s3adsp1800/linux.bin -append rdinit=/boot.sh'
       expect: "job control turned off\r\n# "
+  tests:
+    - method: stdoutwait
+      command: '$QEMU -M petalogix-s3adsp1800 -nographic -nodefaults -serial stdio -kernel mb-s3adsp1800/linux.bin -append rdinit=/selftest.sh'
+      expect: "All tests passed."
 -
   url: http://wiki.qemu.org/download/ppc-virtexml507-linux-2_6_34.tgz
   sha1sum: 5c55881734e46d32c131e38d88df2a0a33cdc92d
