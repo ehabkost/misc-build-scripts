@@ -75,6 +75,12 @@
 -
   url: http://wiki.qemu.org/download/cris-axisdev88-img-linux2_6_33.tgz
   sha1sum: 2066a2cd3f7c6faaa5ea44da1eade3d8d9058bf8
+  arch: cris
+  extract-command: 'tar -zxvf $FILE'
+  tests:
+    - method: stdoutwait
+      command: '$QEMU -M axis-dev88 -nodefaults -serial stdio -kernel cris-axisdev88/kimage -nographic'
+      expect: "job control turned off\r\n# "
 -
   url: http://wiki.qemu.org/download/mb-s3adsp1800-linux-2_6_34.tgz
   sha1sum: 1b1d91e715b8f0fcf56d7fe3c0b76e838f1e5d49
