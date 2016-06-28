@@ -94,6 +94,17 @@
 -
   url: http://wiki.qemu.org/download/ppc-virtexml507-linux-2_6_34.tgz
   sha1sum: 5c55881734e46d32c131e38d88df2a0a33cdc92d
+  arch: ppc
+  extract-command: 'tar -zxvf $FILE'
+  tests:
+    - method: stdoutwait
+      command: 'cd ppc-virtex-ml507; $QEMU -M virtex-ml507 -kernel vmlinux -m 256 -append "rdinit=/boot.sh console=ttyS0" -nographic'
+      # selftest.sh is broken by now, so look for the error message it prints after running a few tests:
+      expect: "job control turned off\r\n# "
+    - method: stdoutwait
+      command: 'cd ppc-virtex-ml507; $QEMU -M virtex-ml507 -kernel vmlinux -m 256 -append "rdinit=/selftest.sh console=ttyS0" -nographic'
+      # selftest.sh is broken by now, so look for the error message it prints after running a few tests:
+      expect: "/usr/bin/sha1test: not found"
 -
   url: http://wiki.qemu.org/download/xtensa-dc232b_kernel_rootfs.tgz
   sha1sum: b79c2594290b0dc3f36eddfeba87fa569bc0f53f
