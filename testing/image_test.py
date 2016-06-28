@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import sys, os, traceback, contextlib, subprocess
+import sys, os, traceback, contextlib, subprocess, select
 import urllib.parse, tempfile, yaml, hashlib
 
 import logging
@@ -11,6 +11,8 @@ MY_DIR = os.path.abspath(os.path.dirname(sys.argv[0]))
 DOWNLOAD_DIR = os.path.join(MY_DIR, 'downloads')
 IMAGE_FILE = os.path.join(MY_DIR, 'images.yaml')
 
+DEFAULT_TIMEOUT = 30
+
 @contextlib.contextmanager
 def changedir(d):
     curdir = os.getcwd()
@@ -20,13 +22,33 @@ def changedir(d):
     finally:
         os.chdir(curdir)
 
+def try_read(f, timeout=None):
+    if timeout is None:
+        timeout = DEFAULT_TIMEOUT
+    timeout = int(timeout*1000)
+
+    p = select.poll()
+    p.register(f, select.POLLIN)
+    r = bytearray()
+    dbg("will poll for %d ms", timeout)
+    if not p.poll(timeout):
+        dbg("timeout (%d) reading %r", timeout, f)
+        return None
+
+    dbg("data is available")
+    while p.poll(0):
+        #TODO: read in larger chunks
+        r.extend(f.read(1))
+    return r
+
+
 def qemu_subprocess(d, cmd, **kwargs):
     arch = d['arch']
     env = os.environ.copy()
     env['QEMU'] = 'qemu-system-%s' % (arch)
     dbg('Will run QEMU command: %r', cmd)
     dbg("$QEMU: %r", env['QEMU'])
-    return subprocess.Popen(cmd, shell=True, env=env, **kwargs)
+    return subprocess.Popen(cmd, shell=True, env=env, bufsize=0, **kwargs)
 
 def just_run(d, t):
     testcmd = t.get('command')
@@ -39,14 +61,14 @@ def stdoutwait(d, t):
     assert testcmd
     proc = qemu_subprocess(d, testcmd, stdout=subprocess.PIPE)
     try:
-        output = bytes()
+        output = bytearray()
         while True:
             #TODO: timeout
-            o = proc.stdout.read(1)
+            o = try_read(proc.stdout, t.get('timeout'))
             if not o:
                 raise Exception("QEMU process terminated")
-            output += o
-            dbg("output is now %d bytes [%s]", len(output), output[-20:])
+            output.extend(o)
+            dbg("output is now %d bytes: [%r]", len(output), output[-50:])
             if e in output:
                 dbg("Success!")
                 break
