@@ -36,7 +36,7 @@
   tests:
     - method: stdoutwait
       expect: "\n\rqemu login: "
-      command: '"exec $QEMU" -machine integratorcp -nodefaults -kernel ./arm-test/zImage.integrator -initrd ./arm-test/arm_root.img -nographic -append console=ttyAMA0 -serial stdio'
+      command: 'exec $QEMU -machine integratorcp -nodefaults -kernel ./arm-test/zImage.integrator -initrd ./arm-test/arm_root.img -nographic -append console=ttyAMA0 -serial stdio'
 -
   url: http://wiki.qemu.org/download/mips-test-0.2.tar.gz
   sha1sum: b3fcf6e0674c4856e4adddf1b08e1977458ee160
