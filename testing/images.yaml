@@ -67,6 +67,11 @@
 -
   url: http://wiki.qemu.org/download/sh-test-0.2.tar.bz2
   sha1sum: 073ec0e3059668500ed56bbdfc34fb8dc09e9b8d
+  arch: sh4
+#  extract-command: 'tar -jxvf $FILE'
+#  tests:
+#    - method: just_run
+#      command: '$QEMU -M r2d -kernel sh-test-0.2/zImage -hda sh-test-0.2/sh-linux-mini.img -serial null -serial stdio -usb -usbdevice keyboard'
 -
   url: http://wiki.qemu.org/download/cris-axisdev88-img-linux2_6_33.tgz
   sha1sum: 2066a2cd3f7c6faaa5ea44da1eade3d8d9058bf8
