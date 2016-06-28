@@ -1,4 +1,4 @@
--
+- name: linux-0.2.img.bz2
   url: http://wiki.qemu.org/download/linux-0.2.img.bz2
   sha1sum: 79cbba08bfa35f4e0b132f5d1cb9554c2fc27dce
   extract-command: 'bunzip2 < ${FILE} > linux.img'
@@ -7,77 +7,77 @@
 #    #TODO: find a way to check for display (not serial) output, or force serial output on this image
 #    - method: just_run
 #      command: 'exec $QEMU -machine accel=kvm -drive file=linux.img,format=raw,if=ide -nodefaults -vga cirrus -serial stdio'
--
+- name: odin1440.img
   url: http://odin.fdos.org/odin2005/odin1440.img
   sha1sum: 28f5c62f459223abab92a86b346823c596149319
--
+- name: small.ffs.bz2
   url: http://nopid.free.fr/small.ffs.bz2
   sha1sum: 584ef200ade76799de71440c8fee249b27d4a708
--
+- name: minix204.tar.bz2
   url: http://wiki.qemu.org/download/minix204.tar.bz2
   sha1sum: a260312ac5892573400cb9232d4a58e736159962
--
+- name: efi-bios.tar.bz2
   url: http://wiki.qemu.org/download/efi-bios.tar.bz2
   sha1sum: eacf1318dcbdac68e927ca4fb79ea2bd1d3fd2bd
--
+- name: sparc-test-0.2.tar.gz
   url: http://wiki.qemu.org/download/sparc-test-0.2.tar.gz
   sha1sum: d9ccd19371feaf0e2d21946e027c03a9ed67c8e6
-  extract-command: 'tar -zxvf ${FILE}'
+  extract-command: 'tar -zxf ${FILE}'
   arch: sparc
   tests:
     - method: stdoutwait
       command: 'exec $QEMU -kernel sparc-test/vmlinux-2.6.11+tcx -nodefaults -serial stdio -initrd sparc-test/linux.img -append "root=/dev/ram console=ttyS0 video=tcxfb:off" -nographic'
       expect: "job control turned off\r\n# "
--
+- name: arm-test-0.2.tar.gz
   url: http://wiki.qemu.org/download/arm-test-0.2.tar.gz
   sha1sum: 5434274bb8a142569b54bdf3f8a14c75c4fa816c
-  extract-command: 'tar -zxvf ${FILE}'
+  extract-command: 'tar -zxf ${FILE}'
   arch: arm
   tests:
     - method: stdoutwait
       expect: "\n\rqemu login: "
-      command: 'exec $QEMU -machine integratorcp -nodefaults -kernel ./arm-test/zImage.integrator -initrd ./arm-test/arm_root.img -nographic -append console=ttyAMA0 -serial stdio'
--
+      command: 'exec $QEMU -machine integratorcp -monitor none -nodefaults -kernel ./arm-test/zImage.integrator -initrd ./arm-test/arm_root.img -nographic -append console=ttyAMA0 -serial stdio'
+- name: mips-test-0.2.tar.gz
   url: http://wiki.qemu.org/download/mips-test-0.2.tar.gz
   sha1sum: b3fcf6e0674c4856e4adddf1b08e1977458ee160
   arch: mips
-  extract-command: 'tar -zxvf $FILE'
+  extract-command: 'tar -zxf $FILE'
   tests:
     - method: stdoutwait
       expect: "job control turned off\r\n~ # "
-      command: 'exec $QEMU -machine mips -kernel mips-test/vmlinux-2.6.18-3-qemu -initrd mips-test/initrd.gz -append "console=ttyS0 init=/bin/sh" -nographic -m 128'
--
+      command: 'exec $QEMU -machine mips -monitor none -kernel mips-test/vmlinux-2.6.18-3-qemu -initrd mips-test/initrd.gz -append "console=ttyS0 init=/bin/sh" -nographic -m 128'
+- name: mipsel-test-0.2.tar.gz
   url: http://wiki.qemu.org/download/mipsel-test-0.2.tar.gz
   sha1sum: 9601b9590490f3e561f9d7b82a3aebeccf59f693
   arch: mipsel
-  extract-command: 'tar -zxvf $FILE'
+  extract-command: 'tar -zxf $FILE'
   tests:
     - method: stdoutwait
       expect: "job control turned off\r\n~ # "
       command: 'exec $QEMU -machine mips -kernel mipsel-test/vmlinux-2.6.18-3-qemu -initrd mipsel-test/initrd.gz -append "console=ttyS0 init=/bin/sh" -nographic -m 128'
--
+- name: coldfire-test-0.1.tar.bz2
   url: http://wiki.qemu.org/download/coldfire-test-0.1.tar.bz2
   sha1sum: 3d14299823e28cc044df32bf674e42ba161e3995
   arch: m68k
-  extract-command: 'tar -jxvf $FILE'
+  extract-command: 'tar -jxf $FILE'
   tests:
     - method: stdoutwait
       command: 'exec $QEMU -nodefaults -serial stdio -kernel coldfire-test-0.1/vmlinux-2.6.21-uc0 -nographic'
       expect: "Enter 'help' for a list of built-in commands.\r\n\r\n# "
--
+- name: sh-test-0.2.tar.bz2
   url: http://wiki.qemu.org/download/sh-test-0.2.tar.bz2
   sha1sum: 073ec0e3059668500ed56bbdfc34fb8dc09e9b8d
   arch: sh4
 #  #TODO: this is failing due to missing bios image
-#  extract-command: 'tar -jxvf $FILE'
+#  extract-command: 'tar -jxf $FILE'
 #  tests:
 #    - method: just_run
 #      command: 'exec $QEMU -M r2d -kernel sh-test-0.2/zImage -hda sh-test-0.2/sh-linux-mini.img -serial null -serial stdio -usb -usbdevice keyboard'
--
+- name: cris-axisdev88-img-linux2_6_33.tgz
   url: http://wiki.qemu.org/download/cris-axisdev88-img-linux2_6_33.tgz
   sha1sum: 2066a2cd3f7c6faaa5ea44da1eade3d8d9058bf8
   arch: cris
-  extract-command: 'tar -zxvf $FILE'
+  extract-command: 'tar -zxf $FILE'
   tests:
     - method: stdoutwait
       command: 'exec $QEMU -M axis-dev88 -nodefaults -serial stdio -kernel cris-axisdev88/kimage -nographic'
@@ -87,11 +87,11 @@
 '
       expect: "All tests passed."
       timeout: 120
--
+- name: mb-s3adsp1800-linux-2_6_34.tgz
   url: http://wiki.qemu.org/download/mb-s3adsp1800-linux-2_6_34.tgz
   sha1sum: 1b1d91e715b8f0fcf56d7fe3c0b76e838f1e5d49
   arch: microblaze
-  extract-command: 'tar -zxvf $FILE'
+  extract-command: 'tar -zxf $FILE'
   tests:
     - method: stdoutwait
       command: 'exec $QEMU -M petalogix-s3adsp1800 -nographic -nodefaults -serial stdio -kernel mb-s3adsp1800/linux.bin -append rdinit=/boot.sh'
@@ -101,11 +101,11 @@
       command: 'exec $QEMU -M petalogix-s3adsp1800 -nographic -nodefaults -serial stdio -kernel mb-s3adsp1800/linux.bin -append rdinit=/selftest.sh'
       expect: "All tests passed."
       timeout: 120
--
+- name: ppc-virtexml507-linux-2_6_34.tgz
   url: http://wiki.qemu.org/download/ppc-virtexml507-linux-2_6_34.tgz
   sha1sum: 5c55881734e46d32c131e38d88df2a0a33cdc92d
   arch: ppc
-  extract-command: 'tar -zxvf $FILE'
+  extract-command: 'tar -zxf $FILE'
   tests:
     - method: stdoutwait
       command: 'cd ppc-virtex-ml507; exec $QEMU -M virtex-ml507 -nodefaults -serial stdio -kernel vmlinux -m 256 -append "rdinit=/boot.sh console=ttyS0" -nographic'
@@ -116,11 +116,11 @@
       # selftest.sh is broken by now, so look for the error message it prints after running a few tests:
       expect: "/usr/bin/sha1test: not found"
       timeout: 120
--
+- name: xtensa-dc232b_kernel_rootfs.tgz
   url: http://wiki.qemu.org/download/xtensa-dc232b_kernel_rootfs.tgz
   sha1sum: b79c2594290b0dc3f36eddfeba87fa569bc0f53f
   arch: xtensa
-  extract-command: 'tar -zxvf $FILE'
+  extract-command: 'tar -zxf $FILE'
   tests:
     - method: stdoutwait
       command: 'exec $QEMU -M sim -nodefaults -serial stdio -m 128M -nographic -semihosting -monitor null -kernel Image.elf'

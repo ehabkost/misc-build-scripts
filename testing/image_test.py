@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 import sys, os, traceback, contextlib, subprocess, select
-import urllib.parse, tempfile, yaml, hashlib
+import urllib.parse, tempfile, yaml, hashlib, argparse
 
 import logging
 logger = logging.getLogger(__name__)
 dbg = logger.debug
-err = logging.error
+err = logger.error
+warn = logger.warning
+info = logger.info
 
 MY_DIR = os.path.abspath(os.path.dirname(sys.argv[0]))
 DOWNLOAD_DIR = os.path.join(MY_DIR, 'downloads')
@@ -107,8 +109,7 @@ def test_image(d):
 
     if not os.path.isfile(downloaded_file):
         #TODO: auto-download
-        err('Download it first')
-        return
+        raise Exception('Download it first: %s' % (url))
 
     filehash = sha1file(open(downloaded_file, mode='rb')).hexdigest()
     expectedhash = d['sha1sum'].strip()
@@ -117,7 +118,7 @@ def test_image(d):
 
     cmd = d.get('extract-command')
     if not cmd:
-        err('No extract command')
+        warn('No extract command for %s', url)
         return
 
 
@@ -133,28 +134,44 @@ def test_image(d):
 
 
 def main():
+
+    parser = argparse.ArgumentParser(description='Run test on images based on images.yaml')
+    parser.add_argument('-d', dest='debug', action='store_true',
+                        help='Debugging messages')
+    parser.add_argument('-v', dest='verbose', action='store_true',
+                        help='Verbose mode')
+    parser.add_argument('filter', nargs='?', help='filter test names', default=None)
+    args = parser.parse_args()
+
     failures = []
-    logging.basicConfig(stream=sys.stderr, level=logging.DEBUG)
-    name = None
-    if len(sys.argv) >= 2:
-        name = sys.argv[1]
+    if args.debug:
+        llevel = logging.DEBUG
+    elif args.verbose:
+        llevel = logging.INFO
+    else:
+        llevel = logging.WARN
+    logging.basicConfig(stream=sys.stderr, level=llevel)
 
     dlist = yaml.load(open(IMAGE_FILE))
     dbg('dlist: %r', dlist)
     try:
         for d in dlist:
-            if name is not None and not name.lower() in d['url'].lower():
+            if args.filter and not args.filter.lower() in d['url'].lower():
                 continue
+
             try:
+                info('STARTING: %s', d['name'])
                 test_image(d)
+                info('SUCCESS: %s', d['name'])
             except Exception as e:
-                traceback.print_exc()
-                failures.append((d,e))
+                logging.exception('exception running test')
+                info('FAILURE: %s', d['name'])
+                failures.append((d,e))  
     finally:
         if failures:
-            print('FAILURES:')
-            for f in failures:
-                print(repr(f))
+            err('Failure summary:')
+            for d,e in failures:
+                err('FAILURE: %s: %r', d['name'], e)
 
     if failures:
         sys.exit(1)
