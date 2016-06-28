@@ -53,6 +53,7 @@ def stdoutwait(d, t):
     finally:
         dbg("terminating QEMU:")
         proc.terminate()
+        proc.wait()
 
 TEST_METHODS = {
     'just_run': just_run,
@@ -99,12 +100,13 @@ def test_image(d):
         dbg('will run command: %r', cmd)
         subprocess.Popen(cmd, shell=True, env=env).wait()
 
-        for t in d.get('tests', ['just_run']):
+        for t in d.get('tests', []):
             m = t['method']
             TEST_METHODS[m](d, t)
 
 
 def main():
+    failures = []
     logging.basicConfig(stream=sys.stderr, level=logging.DEBUG)
     name = None
     if len(sys.argv) >= 2:
@@ -112,13 +114,23 @@ def main():
 
     dlist = yaml.load(open(IMAGE_FILE))
     dbg('dlist: %r', dlist)
-    for d in dlist:
-        if name is not None and not name.lower() in d['url'].lower():
-            continue
-        try:
-            test_image(d)
-        except:
-            traceback.print_exc()
+    try:
+        for d in dlist:
+            if name is not None and not name.lower() in d['url'].lower():
+                continue
+            try:
+                test_image(d)
+            except Exception as e:
+                traceback.print_exc()
+                failures.append((d,e))
+    finally:
+        if failures:
+            print('FAILURES:')
+            for f in failures:
+                print(repr(f))
+
+    if failures:
+        sys.exit(1)
 
 if __name__ == '__main__':
     main()
