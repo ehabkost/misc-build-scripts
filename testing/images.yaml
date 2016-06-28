@@ -40,6 +40,12 @@
 -
   url: http://wiki.qemu.org/download/mips-test-0.2.tar.gz
   sha1sum: b3fcf6e0674c4856e4adddf1b08e1977458ee160
+  arch: mips
+  extract-command: 'tar -zxvf $FILE'
+  tests:
+    - method: stdoutwait
+      expect: "job control turned off\r\n~ # "
+      command: '$QEMU -machine mips -kernel mips-test/vmlinux-2.6.18-3-qemu -initrd mips-test/initrd.gz -append "console=ttyS0 init=/bin/sh" -nographic -m 128'
 -
   url: http://wiki.qemu.org/download/mipsel-test-0.2.tar.gz
   sha1sum: 9601b9590490f3e561f9d7b82a3aebeccf59f693
