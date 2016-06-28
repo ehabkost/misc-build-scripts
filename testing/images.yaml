@@ -35,7 +35,7 @@
   arch: arm
   tests:
     - method: stdoutwait
-      expect: 'qemu login: '
+      expect: "\n\rqemu login: "
       command: '"$QEMU" -machine integratorcp -nodefaults -kernel ./arm-test/zImage.integrator -initrd ./arm-test/arm_root.img -nographic -append console=ttyAMA0 -serial stdio'
 -
   url: http://wiki.qemu.org/download/mips-test-0.2.tar.gz
