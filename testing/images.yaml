@@ -119,5 +119,9 @@
 -
   url: http://wiki.qemu.org/download/xtensa-dc232b_kernel_rootfs.tgz
   sha1sum: b79c2594290b0dc3f36eddfeba87fa569bc0f53f
-
-
+  arch: xtensa
+  extract-command: 'tar -zxvf $FILE'
+  tests:
+    - method: stdoutwait
+      command: 'exec $QEMU -M sim -nodefaults -serial stdio -m 128M -nographic -semihosting -monitor null -kernel Image.elf'
+      expect: "\n\ruclibc login: "
