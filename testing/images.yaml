@@ -3,10 +3,10 @@
   sha1sum: 79cbba08bfa35f4e0b132f5d1cb9554c2fc27dce
   extract-command: 'bunzip2 < ${FILE} > linux.img'
   arch: x86_64
-  tests:
+#  tests:
 #    #TODO: find a way to check for display (not serial) output, or force serial output on this image
 #    - method: just_run
-#      command: '$QEMU -machine accel=kvm -drive file=linux.img,format=raw,if=ide -nodefaults -vga cirrus -serial stdio'
+#      command: 'exec $QEMU -machine accel=kvm -drive file=linux.img,format=raw,if=ide -nodefaults -vga cirrus -serial stdio'
 -
   url: http://odin.fdos.org/odin2005/odin1440.img
   sha1sum: 28f5c62f459223abab92a86b346823c596149319
@@ -26,7 +26,7 @@
   arch: sparc
   tests:
     - method: stdoutwait
-      command: '$QEMU -kernel sparc-test/vmlinux-2.6.11+tcx -initrd sparc-test/linux.img -append "root=/dev/ram console=ttyS0 video=tcxfb:off" -nographic'
+      command: 'exec $QEMU -kernel sparc-test/vmlinux-2.6.11+tcx -nodefaults -serial stdio -initrd sparc-test/linux.img -append "root=/dev/ram console=ttyS0 video=tcxfb:off" -nographic'
       expect: "job control turned off\r\n# "
 -
   url: http://wiki.qemu.org/download/arm-test-0.2.tar.gz
@@ -36,7 +36,7 @@
   tests:
     - method: stdoutwait
       expect: "\n\rqemu login: "
-      command: '"$QEMU" -machine integratorcp -nodefaults -kernel ./arm-test/zImage.integrator -initrd ./arm-test/arm_root.img -nographic -append console=ttyAMA0 -serial stdio'
+      command: '"exec $QEMU" -machine integratorcp -nodefaults -kernel ./arm-test/zImage.integrator -initrd ./arm-test/arm_root.img -nographic -append console=ttyAMA0 -serial stdio'
 -
   url: http://wiki.qemu.org/download/mips-test-0.2.tar.gz
   sha1sum: b3fcf6e0674c4856e4adddf1b08e1977458ee160
@@ -45,7 +45,7 @@
   tests:
     - method: stdoutwait
       expect: "job control turned off\r\n~ # "
-      command: '$QEMU -machine mips -kernel mips-test/vmlinux-2.6.18-3-qemu -initrd mips-test/initrd.gz -append "console=ttyS0 init=/bin/sh" -nographic -m 128'
+      command: 'exec $QEMU -machine mips -kernel mips-test/vmlinux-2.6.18-3-qemu -initrd mips-test/initrd.gz -append "console=ttyS0 init=/bin/sh" -nographic -m 128'
 -
   url: http://wiki.qemu.org/download/mipsel-test-0.2.tar.gz
   sha1sum: 9601b9590490f3e561f9d7b82a3aebeccf59f693
@@ -54,7 +54,7 @@
   tests:
     - method: stdoutwait
       expect: "job control turned off\r\n~ # "
-      command: '$QEMU -machine mips -kernel mipsel-test/vmlinux-2.6.18-3-qemu -initrd mipsel-test/initrd.gz -append "console=ttyS0 init=/bin/sh" -nographic -m 128'
+      command: 'exec $QEMU -machine mips -kernel mipsel-test/vmlinux-2.6.18-3-qemu -initrd mipsel-test/initrd.gz -append "console=ttyS0 init=/bin/sh" -nographic -m 128'
 -
   url: http://wiki.qemu.org/download/coldfire-test-0.1.tar.bz2
   sha1sum: 3d14299823e28cc044df32bf674e42ba161e3995
@@ -62,7 +62,7 @@
   extract-command: 'tar -jxvf $FILE'
   tests:
     - method: stdoutwait
-      command: '$QEMU -kernel coldfire-test-0.1/vmlinux-2.6.21-uc0 -nographic'
+      command: 'exec $QEMU -nodefaults -serial stdio -kernel coldfire-test-0.1/vmlinux-2.6.21-uc0 -nographic'
       expect: "Enter 'help' for a list of built-in commands.\r\n\r\n# "
 -
   url: http://wiki.qemu.org/download/sh-test-0.2.tar.bz2
@@ -72,7 +72,7 @@
 #  extract-command: 'tar -jxvf $FILE'
 #  tests:
 #    - method: just_run
-#      command: '$QEMU -M r2d -kernel sh-test-0.2/zImage -hda sh-test-0.2/sh-linux-mini.img -serial null -serial stdio -usb -usbdevice keyboard'
+#      command: 'exec $QEMU -M r2d -kernel sh-test-0.2/zImage -hda sh-test-0.2/sh-linux-mini.img -serial null -serial stdio -usb -usbdevice keyboard'
 -
   url: http://wiki.qemu.org/download/cris-axisdev88-img-linux2_6_33.tgz
   sha1sum: 2066a2cd3f7c6faaa5ea44da1eade3d8d9058bf8
@@ -80,10 +80,10 @@
   extract-command: 'tar -zxvf $FILE'
   tests:
     - method: stdoutwait
-      command: '$QEMU -M axis-dev88 -nodefaults -serial stdio -kernel cris-axisdev88/kimage -nographic'
+      command: 'exec $QEMU -M axis-dev88 -nodefaults -serial stdio -kernel cris-axisdev88/kimage -nographic'
       expect: "job control turned off\r\n# "
     - method: stdoutwait
-      command: '$QEMU -M axis-dev88 -nodefaults -serial stdio -kernel cris-axisdev88/kimage -nographic -append "root=/dev/mtdblock3 init=/linuxrc rootfstype=jffs2 mmc_core.use_spi_crc=0 mmc_spi.spi_mode=3 init=/selftest.sh"
+      command: 'exec $QEMU -M axis-dev88 -nodefaults -serial stdio -kernel cris-axisdev88/kimage -nographic -append "root=/dev/mtdblock3 init=/linuxrc rootfstype=jffs2 mmc_core.use_spi_crc=0 mmc_spi.spi_mode=3 init=/selftest.sh"
 '
       expect: "All tests passed."
       timeout: 120
@@ -94,11 +94,11 @@
   extract-command: 'tar -zxvf $FILE'
   tests:
     - method: stdoutwait
-      command: '$QEMU -M petalogix-s3adsp1800 -nographic -nodefaults -serial stdio -kernel mb-s3adsp1800/linux.bin -append rdinit=/boot.sh'
+      command: 'exec $QEMU -M petalogix-s3adsp1800 -nographic -nodefaults -serial stdio -kernel mb-s3adsp1800/linux.bin -append rdinit=/boot.sh'
       expect: "job control turned off\r\n# "
   tests:
     - method: stdoutwait
-      command: '$QEMU -M petalogix-s3adsp1800 -nographic -nodefaults -serial stdio -kernel mb-s3adsp1800/linux.bin -append rdinit=/selftest.sh'
+      command: 'exec $QEMU -M petalogix-s3adsp1800 -nographic -nodefaults -serial stdio -kernel mb-s3adsp1800/linux.bin -append rdinit=/selftest.sh'
       expect: "All tests passed."
       timeout: 120
 -
@@ -108,11 +108,11 @@
   extract-command: 'tar -zxvf $FILE'
   tests:
     - method: stdoutwait
-      command: 'cd ppc-virtex-ml507; $QEMU -M virtex-ml507 -kernel vmlinux -m 256 -append "rdinit=/boot.sh console=ttyS0" -nographic'
+      command: 'cd ppc-virtex-ml507; exec $QEMU -M virtex-ml507 -nodefaults -serial stdio -kernel vmlinux -m 256 -append "rdinit=/boot.sh console=ttyS0" -nographic'
       # selftest.sh is broken by now, so look for the error message it prints after running a few tests:
       expect: "job control turned off\r\n# "
     - method: stdoutwait
-      command: 'cd ppc-virtex-ml507; $QEMU -M virtex-ml507 -kernel vmlinux -m 256 -append "rdinit=/selftest.sh console=ttyS0" -nographic'
+      command: 'cd ppc-virtex-ml507; exec $QEMU -M virtex-ml507 -nodefaults -serial stdio -kernel vmlinux -m 256 -append "rdinit=/selftest.sh console=ttyS0" -nographic'
       # selftest.sh is broken by now, so look for the error message it prints after running a few tests:
       expect: "/usr/bin/sha1test: not found"
       timeout: 120
