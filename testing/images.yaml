@@ -1,3 +1,6 @@
+# The image URLs below come from:
+# http://wiki.qemu.org/Testing
+#
 #TODO: this should become an Avocado multiplex config:
 #      https://avocado-framework.readthedocs.io/en/latest/WritingTests.html#using-a-multiplex-file
 
