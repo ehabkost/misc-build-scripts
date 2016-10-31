@@ -2,12 +2,13 @@
 set -e
 
 mydir="$(dirname "$0")"
+ARGS=("$@")
 
 B() {
 	local name="$1"
 	shift
 	mkdir -p "$name"
-	if ! ( cd "$name" && ../configure "$@"; );then
+	if ! ( cd "$name" && ../configure "$@" "${ARGS[@]}"; );then
 		echo "ERROR: Configure of ${name} failed" >&2
 		ERRORS="$ERRORS ${name}"
 	fi
