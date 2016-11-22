@@ -4,11 +4,17 @@ set -e
 mydir="$(dirname "$0")"
 ARGS=("$@")
 
+if [ -f vl.c ];then
+	QEMU_DIR=".."
+else
+	QEMU_DIR="$(readlink -f "$mydir")/../qemu"
+fi
+
 B() {
 	local name="$1"
 	shift
 	mkdir -p "$name"
-	if ! ( cd "$name" && ../configure "$@" "${ARGS[@]}"; );then
+	if ! ( cd "$name" && "$QEMU_DIR"/configure "$@" "${ARGS[@]}"; );then
 		echo "ERROR: Configure of ${name} failed" >&2
 		ERRORS="$ERRORS ${name}"
 	fi
