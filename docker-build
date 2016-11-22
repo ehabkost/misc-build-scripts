@@ -1,0 +1,5 @@
+#!/bin/bash
+mydir="$(dirname "$0")"
+GIT_DIR="$(readlink -f "${mydir}/..")"
+
+sudo docker run -v "$GIT_DIR":/git:ro,Z ehabkost/precise-devel sh -c '/git/scripts/configure-all;make -C all-kvm-build -j4'
