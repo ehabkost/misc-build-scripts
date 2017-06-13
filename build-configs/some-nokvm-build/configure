@@ -1,0 +1,1 @@
+../configure --disable-kvm --target-list=x86_64-softmmu,i386-softmmu,mips-softmmu,s390x-softmmu,ppc-softmmu --enable-werror

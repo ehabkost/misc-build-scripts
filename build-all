@@ -2,18 +2,18 @@
 set -e
 
 mydir="$(dirname "$0")"
+mydir="$(readlink -f "$mydir")"
 export BUILD_ARGS=("$@")
 
 export ERRORS=
 
-B() {
-	local name="$1"
-	shift
+for d in "$mydir/build-configs"/*;do
+	name="$(basename "$d")"
 	if ! ( cd "$name" && make "${BUILD_ARGS[@]}"; );then
 		echo "ERROR: Build of ${name} failed" >&2
 		ERRORS="$ERRORS ${name}"
 	fi
-}
+done
 
 source "$mydir/build-names"
 

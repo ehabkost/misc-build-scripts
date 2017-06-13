@@ -2,25 +2,23 @@
 set -e
 
 mydir="$(dirname "$0")"
+mydir="$(readlink -f "$mydir")"
 ARGS=("$@")
 
 if [ -f vl.c ];then
 	QEMU_DIR=".."
 else
-	QEMU_DIR="$(readlink -f "$mydir")/../qemu"
+	QEMU_DIR="$mydir/../qemu"
 fi
 
-B() {
-	local name="$1"
-	shift
+for d in "$mydir/build-configs"/*;do
+	name="$(basename "$d")"
 	mkdir -p "$name"
-	if ! ( cd "$name" && "$QEMU_DIR"/configure "$@" "${ARGS[@]}"; );then
+	if ! ( cd "$name" && sh -x "$mydir/build-configs/$name/configure" "${ARGS[@]}"; );then
 		echo "ERROR: Configure of ${name} failed" >&2
 		ERRORS="$ERRORS ${name}"
 	fi
-}
-
-source "$mydir/build-names"
+done
 
 if [ -n "$ERRORS" ];then
 	echo ERRORS ABOVE: $ERRORS >&2

@@ -1,0 +1,1 @@
+../configure --cross-prefix=i686-w64-mingw32- --target-list=x86_64-softmmu,i386-softmmu,mips-softmmu,s390x-softmmu,ppc-softmmu
