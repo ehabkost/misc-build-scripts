@@ -1,0 +1,28 @@
+#!/bin/bash
+
+MYDIR="$(dirname "$0")"
+
+QEMU=()
+while [ $# -gt 0 ];do
+	arg="$1"
+	shift
+	if [ "$arg" = "--" ];then
+		break
+	fi
+	QEMU+=("$arg")
+done
+
+QMP=()
+while [ $# -gt 0 ];do
+	arg="$1"
+	shift
+	QMP+=("$arg")
+done
+
+SOCK=/tmp/qmp
+
+"${QEMU[@]}" -qmp "unix:$SOCK,server,nowait" -daemonize
+"$MYDIR"/qmp-shell "$SOCK" "${QMP[@]}"
+"$MYDIR"/qmp-shell "$SOCK" "quit" > /dev/null
+wait
+

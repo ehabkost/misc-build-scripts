@@ -1,0 +1,23 @@
+for c in $(git rev-list --reverse v2.7.0..);do
+	up=0
+	echo -n "Checking: ";git log --pretty=oneline -n 1 $c | cat
+	invalid_commits=
+	for u in $(git cat-file commit $c | grep 'cherry picked from commit' | cut -c27-67);do
+		if [ "$(git merge-base $u master)" = "$u" ];then
+			echo "Is upstream: $c is $u"
+			up=1
+			break
+		fi
+		if [ "$(git merge-base $u rhel7/rhev7/master-2.6.0)" = "$u" ];then
+			echo "Is downstream: $u"
+		else
+			invalid_commits="$invalid_commits $u"
+		fi
+	done
+	if [ "$up" -ne 1 ];then
+		echo -n "Not upstream: ";git log --pretty=oneline -n 1 $c | cat
+		if [ -n "$invalid_commits" ];then
+			echo "Invalid commit IDs: $invalid_commits"
+		fi
+	fi
+done

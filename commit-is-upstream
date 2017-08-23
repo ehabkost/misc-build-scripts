@@ -1,0 +1,37 @@
+#!/bin/bash
+
+commit="$1"
+shift
+if [ "$#" -ge 1 ];then
+	upstream="$1"
+	shift
+else
+	upstream=master
+fi
+
+msg="$(git cat-file commit "$commit")"
+cherry="$(echo "$msg" | grep -E '(cherry picked from commit [0-9a-f]+)' | \
+          sed -e 's@^.*(cherry picked from commit @@;s@).*$@@')"
+git diff --quiet "${commit}^" "$commit" -- '*' ':!redhat' && rhonly=yes || rhonly=no
+git diff --quiet "${commit}^" "$commit" -- '*' ':!redhat' ':!default-configs' && cfgonly=yes || cfgonly=no
+
+is_upstream=no
+for ch in $cherry;do
+	if [ "$(git merge-base "$ch" "$upstream" 2>/dev/null)" = "$ch" ];then
+		is_upstream=yes
+	fi
+done
+
+if [ "$rhonly" = yes ];then
+	echo "redhat/ only"
+	exit 0
+elif [ "$cfgonly" = yes ];then
+	echo "default-configs/ only"
+	exit 0
+elif [ "$is_upstream" != yes ];then
+	echo "not upstream"
+	exit 1
+else
+	echo "upstream"
+	exit 0
+fi
