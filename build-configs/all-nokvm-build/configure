@@ -1,1 +1,1 @@
-../configure --disable-kvm --enable-werror
+../configure --disable-kvm --enable-werror "$@"

@@ -1,1 +1,1 @@
-../configure --enable-kvm --cc='ccache clang' '--extra-cflags=-fsanitize=undefined -Werror'
+../configure --enable-kvm --cc='ccache clang' '--extra-cflags=-fsanitize=undefined -Werror' "$@"

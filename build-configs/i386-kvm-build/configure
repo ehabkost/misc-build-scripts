@@ -1,1 +1,1 @@
-../configure --disable-fdt --enable-kvm --target-list=i386-softmmu,i386-linux-user --enable-werror --extra-cflags=-m32
+../configure --disable-fdt --enable-kvm --target-list=i386-softmmu,i386-linux-user --enable-werror --extra-cflags=-m32 "$@"
