@@ -19,10 +19,10 @@ while [ $# -gt 0 ];do
 	QMP+=("$arg")
 done
 
-SOCK=/tmp/qmp
+SOCK="$(mktemp /tmp/qmp.XXXXXX)"
 
 "${QEMU[@]}" -qmp "unix:$SOCK,server,nowait" -daemonize
-"$MYDIR"/qmp-shell "$SOCK" "${QMP[@]}"
-"$MYDIR"/qmp-shell "$SOCK" "quit" > /dev/null
+"$MYDIR"/qmp/qmp-shell "$SOCK" "${QMP[@]}"
+"$MYDIR"/qmp/qmp-shell "$SOCK" "quit" > /dev/null
 wait
 
