@@ -2,14 +2,27 @@
 
 MYDIR="$(dirname "$0")"
 
-QEMU=()
+QEMUS=()
+while [ $# -gt 0 ];do
+	case "$1" in
+		-*)
+		break
+		;;
+		*)
+		# let's hope every single QEMU argument starts with "-"
+		QEMUS+=("$1")
+		shift
+	esac
+done
+
+QEMUARGS=()
 while [ $# -gt 0 ];do
 	arg="$1"
 	shift
 	if [ "$arg" = "--" ];then
 		break
 	fi
-	QEMU+=("$arg")
+	QEMUARGS+=("$arg")
 done
 
 QMP=()
@@ -21,8 +34,9 @@ done
 
 SOCK="$(mktemp /tmp/qmp.XXXXXX)"
 
-"${QEMU[@]}" -qmp "unix:$SOCK,server,nowait" -daemonize
-"$MYDIR"/qmp/qmp-shell "$SOCK" "${QMP[@]}"
-"$MYDIR"/qmp/qmp-shell "$SOCK" "quit" > /dev/null
-wait
-
+for QEMU in "${QEMUS[@]}";do
+	"$QEMU" "${QEMUARGS[@]}" -qmp "unix:$SOCK,server,nowait" -daemonize
+	"$MYDIR"/qmp/qmp-shell "$SOCK" "${QMP[@]}"
+	"$MYDIR"/qmp/qmp-shell "$SOCK" "quit" > /dev/null
+	wait
+done
