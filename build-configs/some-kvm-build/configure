@@ -1,1 +1,1 @@
-../configure --enable-kvm --target-list=x86_64-softmmu,arm-softmmu,mips-softmmu,s390x-softmmu,ppc64-softmmu --enable-werror "$@"
+../configure --enable-kvm --target-list=x86_64-softmmu,arm-softmmu,aarch64-softmmu,mips-softmmu,s390x-softmmu,ppc64-softmmu --enable-werror "$@"

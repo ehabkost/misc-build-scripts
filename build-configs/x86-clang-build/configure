@@ -1,1 +1,1 @@
-../configure --target-list=x86_64-softmmu --enable-kvm --cc=clang '--extra-cflags=-fsanitize=undefined -Werror --disable-fdt' "$@"
+../configure --target-list=x86_64-softmmu --enable-kvm --cc=clang '--extra-cflags=-fsanitize=undefined -Werror' --disable-fdt "$@"
