@@ -2,7 +2,10 @@
 import qemu
 import sys
 
-vm = qemu.QEMUMachine(sys.argv[1])
+qemubin = sys.argv.pop(1)
+refmodel = sys.argv.pop(1)
+
+vm = qemu.QEMUMachine(qemubin)
 vm.launch()
 cpus = vm.command('query-cpu-definitions')
 
@@ -14,7 +17,7 @@ for d in cpus:
     e['propset'] = set(e['model']['props'].items())
     defs[e['model']['name']] = e
     
-REMOVE = defs['qemu64']
+REMOVE = defs[refmodel]
 for n,e in defs.items():
     zeroes = [i for i in e['propset'] if not i[1]]
     print '%s: removing %d zeroes' % (n, len(zeroes))
@@ -38,7 +41,7 @@ props.remove('stepping')
 
 ml = max(map(len, props))
 for i in reversed(range(ml)):
-    sys.stdout.write('%-8s ' % (''))
+    sys.stdout.write('%-12s ' % (''))
     for p in props:
         if len(p) > i:
             sys.stdout.write(p[i])
@@ -46,13 +49,13 @@ for i in reversed(range(ml)):
             sys.stdout.write(' ')
     sys.stdout.write('\n')
 
-sys.stdout.write('%-8s ' % ('--------'))
+sys.stdout.write('%-12s ' % ('--------'))
 for p in props:
     sys.stdout.write('-')
 sys.stdout.write('\n')
 
 for d in defs.values():
-    sys.stdout.write('%-8s ' % (d['model']['name'][:8]))
+    sys.stdout.write('%-12s ' % (d['model']['name'][:11]))
     c = 0
     for p in props:
         v = dict(d['propset']).get(p)
