@@ -1,0 +1,90 @@
+piix:
+
+
+static void pc_i440fx_2_12_machine_options(MachineClass *m)
+{
+}
+
+static void pc_i440fx_2_11_machine_options(MachineClass *m)
+{
+}
+
+static void pc_i440fx_2_10_machine_options(MachineClass *m)
+{
+    m->auto_enable_numa_with_memhp = false; DONE
+}
+
+q35:
+
+static void pc_q35_2_12_machine_options(MachineClass *m)
+{
+}
+
+static void pc_q35_2_11_machine_options(MachineClass *m)
+{
+    pcmc->default_nic_model = "e1000"; DONE
+}
+
+static void pc_q35_2_10_machine_options(MachineClass *m)
+{
+    m->numa_auto_assign_ram = numa_legacy_auto_assign_ram; BACKPORTED. Already in pc_q35_machine_rhel740_options(). LOOKS LIKE AN UPSTREAM BUG!
+    m->auto_enable_numa_with_memhp = false; DONE
+}
+
+
+pc.h:
+
+#define PC_COMPAT_2_11 \
+    HW_COMPAT_2_11 \
+    {\
+        .driver   = "Skylake-Server" "-" TYPE_X86_CPU,\  DONE
+        .property = "clflushopt",\
+        .value    = "off",\
+    },
+
+#define PC_COMPAT_2_10 \
+    HW_COMPAT_2_10 \
+    {\
+        .driver   = TYPE_X86_CPU,\  BACKPORTED
+        .property = "x-hv-max-vps",\
+        .value    = "0x40",\
+    },{\
+        .driver   = "i440FX-pcihost",\  BACKPORTED
+        .property = "x-pci-hole64-fix",\
+        .value    = "off",\
+    },{\
+        .driver   = "q35-pcihost",\  BACKPORTED
+        .property = "x-pci-hole64-fix",\
+        .value    = "off",\
+    },
+
+
+#define HW_COMPAT_2_11 \
+    {\
+        .driver   = "hpet",\ DONE
+        .property = "hpet-offset-saved",\
+        .value    = "false",\
+    },{\
+        .driver   = "virtio-blk-pci",\ DONE
+        .property = "vectors",\
+        .value    = "2",\
+    },{\
+        .driver   = "vhost-user-blk-pci",\ DONE
+        .property = "vectors",\
+        .value    = "2",\
+    },{\
+        .driver   = "e1000",\ DONE
+        .property = "migrate_tso_props",\
+        .value    = "off",\
+    },
+
+#define HW_COMPAT_2_10 \
+    {\
+        .driver   = "virtio-mouse-device",\ DONE
+        .property = "wheel-axis",\
+        .value    = "false",\
+    },{\
+        .driver   = "virtio-tablet-device",\ DONE
+        .property = "wheel-axis",\
+        .value    = "false",\
+    },

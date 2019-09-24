@@ -1,0 +1,12 @@
+#!/usr/bin/env python3
+import xmlrpc, requests
+from urllib.parse import urljoin
+
+BEAKER = 'https://beaker.engineering.redhat.com/'
+XMLRPC = urljoin(BEAKER, '/RPC2')
+TASK_NAME = '/distribution/inventory-compare'
+
+rpc = xmlrpc.client.ServerProxy(XMLRPC)
+print(repr(rpc.auth.who_am_i()))
+rpc.auth.login_krbV(krb5_mk_req())
+print(repr(rpc.auth.who_am_i()))

@@ -1,0 +1,77 @@
+%{
+#include "asm/kvm_host.h"
+#include "asm/vmx.h"
+%}
+
+probe module("kvm").function("kvm_hv_set_msr_common") {
+  printf("set msr: %lx\n", $msr);
+}
+
+probe module("kvm").statement("*@arch/x86/kvm/x86.c:6625") {
+   printf("reset request!\n");
+}
+
+/*
+probe module("kvm").function("kvm_arch_vcpu_ioctl_run").return {
+   printf("vcpu_run returned %d\n", $return);
+}
+*/
+
+/* probe module("kvm").function("kvm_make_request") {
+   printf("making req...\n");
+   print_backtrace();
+} */
+
+%{
+#define __ex_clear(x, reg) \
+        ____kvm_handle_fault_on_reboot(x, "xor " reg " , " reg)
+
+static inline unsigned long vmcs_readl(unsigned long field)
+{
+        unsigned long value;
+
+        asm volatile (__ex_clear(ASM_VMX_VMREAD_RDX_RAX, "%0")
+                      : "=a"(value) : "d"(field) : "cc");
+        return value;
+}
+%}
+
+function kvm_rip:long() {
+  return %{ vmcs_readl(GUEST_RIP) %}
+}
+
+probe module("kvm_intel").function("handle_triple_fault") {
+   printf("triple fault!\n");
+   printf("rip: %lx\n", kvm_rip());
+   print_backtrace();
+}
+
+probe module("kvm").function("kvm_multiple_exception") {
+   printf("mult exception...\n");
+   printf("rip: %lx\n", kvm_rip());
+}
+
+probe module("kvm").statement("kvm_multiple_exception@arch/x86/kvm/x86.c:402") {
+   printf("possible DF\n");
+   print_backtrace();
+}
+
+probe module("kvm").function("kvm_multiple_exception").return {
+   printf("mult exception ret\n");
+}
+
+probe module("kvm_intel").statement("vmx_handle_exit@*:8391") {
+   printf("KVM exit. reason: %d\n", $exit_reason);
+}
+
+probe module("kvm_intel").function("vmx_set_cr4") {
+  printf("cpu#%d: set cr4: %lx (rip %lx)\n", $vcpu->vcpu_id, $cr4, kvm_rip());
+}
+
+probe module("kvm_intel").statement("vmx_set_cr4@*:3979") {
+   printf("hw_cr4 is set to: %lx\n", $hw_cr4);
+}
+
+probe module("kvm_intel").function("vmx_set_cr0") {
+  printf("cpu#%d, set_cr0: %lx (rip %lx)\n", $vcpu->vcpu_id, $cr0, kvm_rip());
+}
