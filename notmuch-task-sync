@@ -1,0 +1,12 @@
+#!/usr/bin/env python3
+
+import sys, subprocess, json
+tag=sys.argv[1]
+
+def task_list(*args):
+    out = subprocess.Popen(['task', 'list', args], stdout=subprocess.PIPE).stdout
+    tasks = json.load(out)
+    print(len(tasks), ' tasks')
+    return tasks
+
+alltasks = task_list()
