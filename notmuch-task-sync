@@ -1,12 +1,79 @@
 #!/usr/bin/env python3
 
-import sys, subprocess, json
-tag=sys.argv[1]
+import sys, subprocess, json, logging
+
+logger = logging.getLogger('notmuch-task-sync')
+dbg = logger.debug
+
+tag_TODO = 'TODO'
+tag_TaskCreated = 'TaskCreated'
+
+args_new_tasks = ['+inbox']
 
 def task_list(*args):
-    out = subprocess.Popen(['task', 'list', args], stdout=subprocess.PIPE).stdout
-    tasks = json.load(out)
-    print(len(tasks), ' tasks')
+    cmd = ['task']
+    cmd.extend(args)
+    cmd.append('export')
+    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE)
+    tasks = json.load(proc.stdout)
+    proc.wait()
     return tasks
 
-alltasks = task_list()
+def notmuch_batch_tag(tags, queries):
+    tag_process = subprocess.Popen(['notmuch', 'tag', '--batch'],
+                                   stdin=subprocess.PIPE,
+                                   encoding='utf-8')
+    for q in queries:
+        tag_cmd = ' '.join(f'+{t}' for t in tags)
+        cmd = '%s -- %s' % (tag_cmd, q)
+        dbg('cmd: %s', cmd)
+        tag_process.stdin.write(cmd)
+        tag_process.stdin.write('\n')
+    tag_process.stdin.close()
+    dbg('waiting for batch tag process')
+    tag_process.wait()
+
+def notmuch_search(*query, output='messages'):
+    cmd = ['notmuch', 'search', '--format=json', f'--output={output}']
+    cmd.extend(query)
+    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE)
+    messages = json.load(proc.stdout)
+    proc.wait()
+    return messages
+
+logging.basicConfig(level=logging.DEBUG, stream=sys.stderr)
+
+
+# tag new tasks from TaskWarrior:
+already_tagged = notmuch_search(f'tag:{tag_TODO} and tag:{tag_TaskCreated}')
+pending_tasks = task_list('msgid.any:', '-COMPLETED', '-DELETED')
+dbg("%d total tasks", len(pending_tasks))
+
+pending_msgids = [t['msgid'] for t in pending_tasks]
+pending_msgids = [m for m in pending_msgids if m not in already_tagged]
+dbg("%d tasks not tagged yet", len(pending_msgids))
+for m in pending_msgids:
+    assert all(c not in m for c in (' ', '"', "'")), "invalid msgid: %s" % (m)
+notmuch_batch_tag((tag_TODO, tag_TaskCreated), ('id:%s' % (m) for m in pending_msgids))
+
+# create new tasks for messages recently tagged:
+new_tasks = notmuch_search(f'tag:{tag_TODO} and not tag:{tag_TaskCreated}', output='summary')
+dbg('%d new tasks', len(new_tasks))
+for t in new_tasks:
+    dbg('task: %r', t)
+    thread_id = t['thread']
+    msgids = notmuch_search(f'thread:{thread_id}')
+
+    found = any(msgid in pending_msgids for msgid in msgids)
+    if not found:
+        msgid = msgids[0]
+        dbg("creating task for msgid %s", msgid)
+        subject = t['subject']
+        task_add = ['task', 'add']
+        task_add.extend(args_new_tasks)
+        task_add.append(f'msgid:{msgid}')
+        task_add.append(f'description:{subject}')
+        dbg('cmd: %r', task_add)
+        subprocess.run(task_add)
+    subprocess.run(['notmuch', 'tag', f'+{tag_TaskCreated}', f'thread:{thread_id}'])
+
