@@ -4,9 +4,12 @@ import sys, subprocess, json, logging
 
 logger = logging.getLogger('notmuch-task-sync')
 dbg = logger.debug
+warn = logger.warning
 
 tag_TODO = 'TODO'
 tag_TaskCreated = 'TaskCreated'
+tag_TaskDeleted = 'TaskDeleted'
+tag_TaskCompleted = 'TaskCompleted'
 
 args_new_tasks = ['+inbox']
 
@@ -47,14 +50,15 @@ logging.basicConfig(level=logging.DEBUG, stream=sys.stderr)
 # tag new tasks from TaskWarrior:
 already_tagged = notmuch_search(f'tag:{tag_TODO} and tag:{tag_TaskCreated}')
 pending_tasks = task_list('msgid.any:', '-COMPLETED', '-DELETED')
+pending_msgids = [t['msgid'] for t in pending_tasks]
 dbg("%d total tasks", len(pending_tasks))
 
-pending_msgids = [t['msgid'] for t in pending_tasks]
-pending_msgids = [m for m in pending_msgids if m not in already_tagged]
-dbg("%d tasks not tagged yet", len(pending_msgids))
-for m in pending_msgids:
+not_tagged_msgids = [m for m in pending_msgids if m not in already_tagged]
+dbg("%d messages not tagged yet", len(not_tagged_msgids))
+for m in not_tagged_msgids:
     assert all(c not in m for c in (' ', '"', "'")), "invalid msgid: %s" % (m)
-notmuch_batch_tag((tag_TODO, tag_TaskCreated), ('id:%s' % (m) for m in pending_msgids))
+if not_tagged_msgids:
+    notmuch_batch_tag((tag_TODO, tag_TaskCreated), ('id:%s' % (m) for m in not_created_msgids))
 
 # create new tasks for messages recently tagged:
 new_tasks = notmuch_search(f'tag:{tag_TODO} and not tag:{tag_TaskCreated}', output='summary')
@@ -77,3 +81,19 @@ for t in new_tasks:
         subprocess.run(task_add)
     subprocess.run(['notmuch', 'tag', f'+{tag_TaskCreated}', f'thread:{thread_id}'])
 
+# untag messages for completed tasks:
+for m in already_tagged:
+    if m in pending_msgids:
+        continue
+    tasks = task_list(f'msgid:{m}')
+    if not tasks:
+        warn("can't find task for msgid:%s", m)
+        continue
+    for t in tasks:
+        dbg('need to untag %s task: id:%s', t['status'], m)
+        if t['status'] == 'deleted':
+            subprocess.run(['notmuch', 'tag', f'+{tag_TaskDeleted}', f'-{tag_TODO}', f'id:{m}'])
+        elif t['status'] == 'completed':
+            subprocess.run(['notmuch', 'tag', f'+{tag_TaskCompleted}', f'-{tag_TODO}', f'id:{m}'])
+        else:
+            warn("I don't know what to do with %s task: id:%s", t['status'], m)
