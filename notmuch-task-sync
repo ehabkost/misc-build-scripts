@@ -58,7 +58,7 @@ dbg("%d messages not tagged yet", len(not_tagged_msgids))
 for m in not_tagged_msgids:
     assert all(c not in m for c in (' ', '"', "'")), "invalid msgid: %s" % (m)
 if not_tagged_msgids:
-    notmuch_batch_tag((tag_TODO, tag_TaskCreated), ('id:%s' % (m) for m in not_created_msgids))
+    notmuch_batch_tag((tag_TODO, tag_TaskCreated), ('id:%s' % (m) for m in not_tagged_msgids))
 
 # create new tasks for messages recently tagged:
 new_tasks = notmuch_search(f'tag:{tag_TODO} and not tag:{tag_TaskCreated}', output='summary')
@@ -79,6 +79,7 @@ for t in new_tasks:
         task_add.append(f'description:{subject}')
         dbg('cmd: %r', task_add)
         subprocess.run(task_add)
+        subprocess.run(['notmuch', 'tag', f'-{tag_TODO}', f'thread:{thread_id} and not id:{msgid}'])
     subprocess.run(['notmuch', 'tag', f'+{tag_TaskCreated}', f'thread:{thread_id}'])
 
 # untag messages for completed tasks:
